@@ -90,6 +90,24 @@ public class DataBaseManager {
         return null;
     }
 
+    public boolean removeComplaint(String userId, String number) {
+        try {
+            PreparedStatement checkStatement = connection.prepareStatement(
+                    "DELETE FROM complaint WHERE (userId)=(?) AND (number)=(?)"
+            );
+            checkStatement.setString(1, userId);
+            checkStatement.setString(2, number);
+
+            int result = checkStatement.executeUpdate();
+
+            return result > 0;
+        } catch (Exception e) {
+            System.out.println("Values insertion failed");
+        }
+
+        return false;
+    }
+
     public Complaint existedComplaint(String userId, String number) {
         try {
             PreparedStatement checkStatement = connection.prepareStatement(

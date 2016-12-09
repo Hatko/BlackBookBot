@@ -121,5 +121,9 @@ public class BlackListBot extends TelegramLongPollingBot implements IBotCommande
         return DataBaseManager.sharedInstance().existedComplaint(userId, number);
     }
 
+    @Override
+    public boolean removeComplaint(String userId, String number) {
+        return DataBaseManager.sharedInstance().removeComplaint(userId, number);
+    }
     //endregion
 }

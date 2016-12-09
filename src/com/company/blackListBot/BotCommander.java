@@ -24,6 +24,8 @@ interface IBotCommanderDelegate {
     ArrayList<Complaint> fetchAllComplaintsForUser(String userId);
 
     Complaint existedComplaint(String userId, String number);
+
+    boolean removeComplaint(String userId, String number);
 }
 
 class BotCommander {
@@ -96,6 +98,19 @@ class BotCommander {
                     numberHasIncorrectFormatError();
                 }
             }
+            case RemoveNumber: {
+                if (ComplaintBuilder.validatePhoneNumber(input)) {
+                    if (delegate.removeComplaint(userId, input)) {
+                        delegate.printMessage("This number was successfully deleted", this);
+                    } else {
+                        delegate.printMessage("Number wasn't found", this);
+                    }
+
+                    setState(BotCommanderState.Root);
+                } else {
+                    numberHasIncorrectFormatError();
+                }
+            }
             break;
         }
     }
@@ -114,14 +129,18 @@ class BotCommander {
                 ArrayList<Complaint> complaints = delegate.fetchAllComplaintsForUser(userId);
 
                 for (Complaint complaint : complaints) {
-                    delegate.printMessage(complaint.description, this);
+                    delegate.printMessage(complaint.number + ":\n" + complaint.description, this);
                 }
+                break;
+            case "/remove":
+                setState(BotCommanderState.RemoveNumber);
+                delegate.printMessage("Enter number to delete from your list:", this);
             default:
         }
     }
 
     enum BotCommanderState {
-        Root(0), AddNewNumber(1), AddComplaint(2), CheckNumber(3);
+        Root(0), AddNewNumber(1), AddComplaint(2), CheckNumber(3), RemoveNumber(4);
 
         int value;
 
